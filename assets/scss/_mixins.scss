@@ -1,0 +1,71 @@
+@use 'variables' as v;
+
+// Media query mixins
+@mixin media-breakpoint-up($breakpoint) {
+    @if $breakpoint == sm {
+        @media (min-width: v.$breakpoint-sm) { @content; }
+    } @else if $breakpoint == md {
+        @media (min-width: v.$breakpoint-md) { @content; }
+    } @else if $breakpoint == lg {
+        @media (min-width: v.$breakpoint-lg) { @content; }
+    } @else if $breakpoint == xl {
+        @media (min-width: v.$breakpoint-xl) { @content; }
+    }
+}
+
+// Card mixin
+@mixin card-style {
+    background-color: white;
+    border-radius: v.$border-radius;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+// Flexbox mixins
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+// Button mixins
+@mixin button-variant($background, $border, $color) {
+    background-color: $background;
+    border-color: $border;
+    color: $color;
+
+    &:hover {
+        background-color: darken($background, 10%);
+        border-color: darken($border, 10%);
+        color: $color;
+    }
+}
+
+// Input mixins
+@mixin input-style {
+    padding: v.$input-padding;
+    border-radius: v.$input-border-radius;
+    border: 1px solid v.$input-border-color;
+    transition: v.$button-transition;
+
+    &:focus {
+        outline: none;
+        border-color: v.$primary;
+        box-shadow: 0 0 0 0.2rem rgba(v.$primary, 0.25);
+    }
+}
+
+// Modal mixins
+@mixin modal-style {
+    background-color: v.$calculator-bg;
+    border-radius: v.$modal-border-radius;
+    padding: v.$modal-padding;
+    box-shadow: v.$calculator-shadow;
+} 

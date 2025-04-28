@@ -1,0 +1,56 @@
+@use 'mixins' as m;
+
+// Mobile-first responsive styles
+.tax-calculator {
+    @include m.media-breakpoint-up(sm) {
+        &-form {
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+        }
+    }
+
+    @include m.media-breakpoint-up(md) {
+        &-title {
+            font-size: 2.5rem;
+        }
+
+        &-description {
+            font-size: 1.2rem;
+        }
+
+        &-form {
+            .form-row {
+                display: flex;
+                flex-wrap: wrap;
+                margin: 0 -1rem;
+
+                .form-group {
+                    flex: 0 0 50%;
+                    padding: 0 1rem;
+                }
+            }
+        }
+    }
+
+    @include m.media-breakpoint-up(lg) {
+        &-results {
+            padding: 2rem;
+        }
+    }
+}
+
+// Modal responsive styles
+.tax-calculator-modal {
+    @include m.media-breakpoint-up(md) {
+        .modal-dialog {
+            max-width: 600px;
+        }
+    }
+
+    @include m.media-breakpoint-up(lg) {
+        .modal-dialog {
+            max-width: 800px;
+        }
+    }
+} 

@@ -1,0 +1,12 @@
+// Import Bootstrap
+@use "sass:color";
+@use "sass:math";
+@use "../../node_modules/bootstrap/scss/bootstrap" with (
+  $enable-deprecation-messages: false
+);
+
+// Import custom files
+@use "variables";
+@use "mixins";
+@use "calculator";
+@use "responsive"; 

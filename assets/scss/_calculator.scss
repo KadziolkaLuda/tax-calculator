@@ -1,0 +1,160 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.tax-calculator {
+    // @include m.card-style;
+    // max-width: 1200px;
+    // margin: 0 auto;
+    // padding: 2rem;
+
+    .quantity {
+        .quantity-monthly, .quantity-onse {
+            .form-group {
+                margin-bottom: 1.5rem;
+
+                label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    color: v.$dark;
+                    font-weight: 500;
+                }
+
+                .tp-input {
+                    @include m.input-style;
+                    width: 100%;
+                }
+
+                .invalid-feedback {
+                    display: none;
+                    color: v.$danger;
+                    font-size: 0.875rem;
+                    margin-top: 0.25rem;
+                }
+            }
+        }
+
+        .or-text {
+            padding: 0.5rem 1rem;
+            border-radius: v.$border-radius;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .or-line {
+            flex: 1;
+            height: 1px;
+            background-color: v.$secondary;
+            margin-left: -1rem;
+        }
+    }
+
+    .taxes-view {
+        .title-sm {
+            font-size: 1.25rem;
+            color: v.$dark;
+            margin-bottom: 2rem;
+        }
+
+        .form-check {
+            margin-bottom: 1rem;
+
+            p {
+                margin-bottom: 0.5rem;
+                color: v.$dark;
+            }
+
+            .form-check-input {
+                margin-right: 0.5rem;
+            }
+        }
+
+        .taxes-result {
+            .form-control {
+                background-color: white;
+                border: 1px solid v.$border-color;
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .text-muted {
+                font-size: 0.875rem;
+                color: v.$secondary;
+                margin-bottom: 0;
+            }
+
+            .icon-ack {
+                cursor: help;
+                color: v.$secondary;
+                font-size: 1.25rem;
+            }
+
+            #totalPledge {
+                .form-control {
+                    background-color: v.$secondary;
+                    color: white;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    .btn-secondary {
+        @include m.button-variant(v.$secondary, v.$secondary, white);
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+}
+
+// Responsive styles
+// @include m.media-breakpoint-down(md) {
+//     .tax-calculator {
+//         // padding: 1rem;
+
+//         .quantity {
+//             .form-group {
+//                 margin-bottom: 1rem;
+//             }
+//         }
+
+//         .taxes-view {
+//             .title-sm {
+//                 font-size: 1.1rem;
+//             }
+
+//             .taxes-result {
+//                 > div {
+//                     margin-bottom: 1rem;
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// Modal styles
+.tax-calculator-modal {
+    .modal-content {
+        @include m.modal-style;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid v.$input-border-color;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+
+        h5 {
+            margin: 0;
+            color: v.$dark;
+        }
+    }
+
+    .modal-body {
+        padding: 1.5rem 0;
+    }
+
+    .modal-footer {
+        border-top: 1px solid v.$input-border-color;
+        padding-top: 1rem;
+        margin-top: 1.5rem;
+    }
+} 

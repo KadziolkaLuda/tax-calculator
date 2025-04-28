@@ -1,0 +1,44 @@
+// Bootstrap variables overrides
+$primary: #007bff;
+$secondary: #6c757d;
+$success: #28a745;
+$info: #17a2b8;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$dark: #343a40;
+
+
+$border-color: #ced4da;
+
+// Border radius
+$border-radius: 0.5rem;
+
+// Custom variables
+$calculator-bg: #ffffff;
+$calculator-border-radius: 0.5rem;
+$calculator-padding: 2rem;
+$calculator-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+$input-border-radius: 0.25rem;
+$input-padding: 0.5rem 1rem;
+$input-border-color: #ced4da;
+
+$button-border-radius: 0.25rem;
+$button-padding: 0.5rem 1.5rem;
+$button-transition: all 0.3s ease;
+
+$modal-backdrop-bg: rgba(0, 0, 0, 0.5);
+$modal-border-radius: 0.5rem;
+$modal-padding: 2rem;
+
+// Typography
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px; 
