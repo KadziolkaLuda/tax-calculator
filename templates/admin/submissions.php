@@ -37,13 +37,14 @@ if (!defined('ABSPATH')) {
     <table class="wp-list-table widefat fixed striped">
         <thead>
             <tr>
-                <th scope="col"><?php _e('ID', 'tax-calculator'); ?></th>
+                <th scope="col" style="width: 30px;"><?php _e('ID', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Name', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Email', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('Mobile', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('Address', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Donation Type', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Amount', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Years', 'tax-calculator'); ?></th>
-                <th scope="col"><?php _e('Tax Rate', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Gift Aid', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Total', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Date', 'tax-calculator'); ?></th>
@@ -57,10 +58,21 @@ if (!defined('ABSPATH')) {
                         <td><?php echo esc_html($submission->id); ?></td>
                         <td><?php echo esc_html($submission->first_name . ' ' . $submission->last_name); ?></td>
                         <td><?php echo esc_html($submission->email); ?></td>
+                        <td><?php echo esc_html($submission->mobile); ?></td>
+                        <td>
+                            <?php 
+                            $address_parts = array(
+                                esc_html($submission->address),
+                                esc_html($submission->postal_town),
+                                esc_html($submission->postal_code),
+                                esc_html($submission->country)
+                            );
+                            echo implode(', ', array_filter($address_parts));
+                            ?>
+                        </td>
                         <td><?php echo esc_html($submission->donation_type); ?></td>
                         <td><?php echo esc_html($submission->donation_amount); ?></td>
-                        <td><?php echo esc_html($submission->years); ?></td>
-                        <td><?php echo esc_html($submission->tax_rate); ?></td>
+                        <td><?php echo $submission->donation_type === 'one-time' ? '-' : esc_html($submission->years); ?></td>
                         <td><?php echo $submission->gift_aid ? __('Yes', 'tax-calculator') : __('No', 'tax-calculator'); ?></td>
                         <td><?php echo esc_html($submission->total_amount); ?></td>
                         <td><?php echo esc_html($submission->created_at); ?></td>
@@ -75,7 +87,7 @@ if (!defined('ABSPATH')) {
                 <?php endforeach; ?>
             <?php else : ?>
                 <tr>
-                    <td colspan="11"><?php _e('No submissions found.', 'tax-calculator'); ?></td>
+                    <td colspan="12"><?php _e('No submissions found.', 'tax-calculator'); ?></td>
                 </tr>
             <?php endif; ?>
         </tbody>

@@ -11,6 +11,9 @@ class Tax_Calculator_DB {
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . self::$table_name;
 
+        // Drop existing table if it exists
+        $wpdb->query("DROP TABLE IF EXISTS $table_name");
+
         $sql = "CREATE TABLE IF NOT EXISTS $table_name (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             first_name varchar(100) NOT NULL,
@@ -24,13 +27,9 @@ class Tax_Calculator_DB {
             donation_type enum('monthly','one-time') NOT NULL,
             donation_amount decimal(10,2) NOT NULL,
             years int(2) DEFAULT NULL,
-            tax_rate enum('basic','40','45','not') NOT NULL,
             gift_aid tinyint(1) NOT NULL,
             total_amount decimal(10,2) NOT NULL,
-            net_monthly_cost decimal(10,2) DEFAULT NULL,
-            net_annual_cost decimal(10,2) DEFAULT NULL,
             total_net_cost decimal(10,2) DEFAULT NULL,
-            total_value_with_gift_aid decimal(10,2) NOT NULL,
             ip_address varchar(45) DEFAULT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
@@ -60,20 +59,15 @@ class Tax_Calculator_DB {
                 'donation_type' => $data['donationType'],
                 'donation_amount' => floatval($data['donationAmount']),
                 'years' => isset($data['years']) ? intval($data['years']) : null,
-                'tax_rate' => $data['taxRate'],
                 'gift_aid' => $data['giftAid'] ? 1 : 0,
                 'total_amount' => floatval($data['totalAmount']),
-                'net_monthly_cost' => isset($data['netMonthlyCost']) ? floatval($data['netMonthlyCost']) : null,
-                'net_annual_cost' => isset($data['netAnnualCost']) ? floatval($data['netAnnualCost']) : null,
                 'total_net_cost' => isset($data['totalNetCost']) ? floatval($data['totalNetCost']) : null,
-                'total_value_with_gift_aid' => floatval($data['totalValueWithGiftAid']),
                 'ip_address' => self::get_client_ip()
             ),
             array(
                 '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-                '%s', '%f', '%d', '%s', '%d',
-                '%f', '%f', '%f', '%f', '%f',
-                '%s'
+                '%s', '%f', '%d', '%d',
+                '%f', '%f', '%s'
             )
         );
 

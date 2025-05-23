@@ -163,25 +163,15 @@ class Tax_Calculator_Admin {
         // Add headers
         $headers = array(
             'ID',
-            'First Name',
-            'Last Name',
+            'Name',
             'Email',
-            'Address',
-            'Postal Town',
-            'Postal Code',
-            'Country',
             'Mobile',
+            'Address',
             'Donation Type',
             'Donation Amount',
             'Years',
-            'Tax Rate',
             'Gift Aid',
             'Total Amount',
-            'Net Monthly Cost',
-            'Net Annual Cost',
-            'Total Net Cost',
-            'Total Value with Gift Aid',
-            'IP Address',
             'Created At'
         );
         
@@ -190,27 +180,25 @@ class Tax_Calculator_Admin {
 
         // Add data
         foreach ($submissions['items'] as $submission) {
-            $row = array(
-                $submission->id,
-                $submission->first_name,
-                $submission->last_name,
-                $submission->email,
+            $address_parts = array(
                 $submission->address,
                 $submission->postal_town,
                 $submission->postal_code,
-                $submission->country,
+                $submission->country
+            );
+            $full_address = implode(', ', array_filter($address_parts));
+            
+            $row = array(
+                $submission->id,
+                $submission->first_name . ' ' . $submission->last_name,
+                $submission->email,
                 $submission->mobile,
+                $full_address,
                 $submission->donation_type,
                 $submission->donation_amount,
-                $submission->years,
-                $submission->tax_rate,
+                $submission->donation_type === 'one-time' ? '-' : $submission->years,
                 $submission->gift_aid ? 'Yes' : 'No',
                 $submission->total_amount,
-                $submission->net_monthly_cost,
-                $submission->net_annual_cost,
-                $submission->total_net_cost,
-                $submission->total_value_with_gift_aid,
-                $submission->ip_address,
                 $submission->created_at
             );
             

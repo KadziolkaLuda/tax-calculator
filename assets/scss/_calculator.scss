@@ -1,26 +1,36 @@
 @use 'variables' as v;
 @use 'mixins' as m;
 
+$chekbox-size: 40px;
+
 .tax-calculator {
-    // @include m.card-style;
-    // max-width: 1200px;
-    // margin: 0 auto;
-    // padding: 2rem;
+    .calculat-divider {        
+        text-align: center;
+        position: relative;
+    
+        span {
+          background: white;
+          padding: 0 10px;
+        }
+    
+        &:after {
+          content: "";
+          position: absolute;
+          height: 1px;
+          z-index: -1;
+          left: 0;
+          right: 0;
+          top: 50%;
+          background: grey;
+        }
+      }
 
     .quantity {
         .quantity-monthly, .quantity-onse {
             .form-group {
                 margin-bottom: 1.5rem;
 
-                label {
-                    display: block;
-                    margin-bottom: 0.5rem;
-                    color: v.$dark;
-                    font-weight: 500;
-                }
-
                 .tp-input {
-                    @include m.input-style;
                     width: 100%;
                 }
 
@@ -33,27 +43,9 @@
             }
         }
 
-        .or-text {
-            padding: 0.5rem 1rem;
-            border-radius: v.$border-radius;
-            font-weight: 600;
-            z-index: 1;
-        }
-
-        .or-line {
-            flex: 1;
-            height: 1px;
-            background-color: v.$secondary;
-            margin-left: -1rem;
-        }
     }
 
-    .taxes-view {
-        .title-sm {
-            font-size: 1.25rem;
-            color: v.$dark;
-            margin-bottom: 2rem;
-        }
+    .taxes-view {      
 
         .form-check {
             margin-bottom: 1rem;
@@ -76,16 +68,9 @@
                 margin-bottom: 0.5rem;
             }
 
-            .text-muted {
-                font-size: 0.875rem;
-                color: v.$secondary;
-                margin-bottom: 0;
-            }
 
             .icon-ack {
-                cursor: help;
-                color: v.$secondary;
-                font-size: 1.25rem;
+                cursor: help;              
             }
 
             #totalPledge {
@@ -98,63 +83,80 @@
         }
     }
 
-    .btn-secondary {
-        @include m.button-variant(v.$secondary, v.$secondary, white);
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      
+        p {
+          padding-right: 0.5rem;
+          text-align: right;
+          margin: 0;
+          line-height: 1;
+        }
+      
+        &-input {
+          display: none;
+      
+          &+label {
+            background-color: white;
+            border: 1px solid grey;
+            box-shadow:0px 0px 10px 0px #e9ecef;
+            width: $chekbox-size;
+            height: $chekbox-size;
+            flex: 0 0 $chekbox-size;
+            padding: 10px;
+            position: relative;
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+          }
+      
+          &:checked+label {
+            &:after {
+              content: '\2714';
+              font-size: 24px;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color: v.$primary;
+            }
+          }
+        }
+      }
 }
 
-// Responsive styles
-// @include m.media-breakpoint-down(md) {
-//     .tax-calculator {
-//         // padding: 1rem;
 
-//         .quantity {
-//             .form-group {
-//                 margin-bottom: 1rem;
-//             }
-//         }
 
-//         .taxes-view {
-//             .title-sm {
-//                 font-size: 1.1rem;
-//             }
+// Validation Styles
 
-//             .taxes-result {
-//                 > div {
-//                     margin-bottom: 1rem;
-//                 }
-//             }
-//         }
-//     }
-// }
+.invalid-feedback {
+    display: none;   
+}
 
-// Modal styles
-.tax-calculator-modal {
-    .modal-content {
-        @include m.modal-style;
+.tp-input.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+// Input group validation styles
+.input-group {
+    .tp-input.is-invalid {
+        z-index: 3;
     }
 
-    .modal-header {
-        border-bottom: 1px solid v.$input-border-color;
-        padding-bottom: 1rem;
-        margin-bottom: 1.5rem;
+    .input-group-text {
+        z-index: 2;
+    }
 
-        h5 {
-            margin: 0;
-            color: v.$dark;
+} 
+
+.tp-label {
+    &--required {
+        &:after {
+            content: "*";
+            color: v.$danger;
         }
     }
-
-    .modal-body {
-        padding: 1.5rem 0;
-    }
-
-    .modal-footer {
-        border-top: 1px solid v.$input-border-color;
-        padding-top: 1rem;
-        margin-top: 1.5rem;
-    }
-} 
+}

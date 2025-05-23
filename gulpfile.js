@@ -15,7 +15,7 @@ const paths = {
 // Copy Bootstrap files
 function copyBootstrap() {
     return gulp.src([
-        paths.bootstrap + '/dist/css/bootstrap.min.css',
+        // paths.bootstrap + '/dist/css/bootstrap.min.css',
         paths.bootstrap + '/dist/js/bootstrap.bundle.min.js'
     ])
     .pipe(gulp.dest(function(file) {
@@ -25,7 +25,8 @@ function copyBootstrap() {
 
 // Compile SCSS to CSS
 function buildStyles() {
-    return gulp.src('./assets/scss/main.scss')
+    // Generate minified CSS
+    gulp.src('./assets/scss/main.scss')
         .pipe(sass({
             includePaths: [paths.bootstrap + '/scss'],
             outputStyle: 'compressed',
@@ -36,6 +37,19 @@ function buildStyles() {
         }))
         .pipe(cleanCSS())
         .pipe(rename('tax-calculator.min.css'))
+        .pipe(gulp.dest(paths.css));
+
+    // Generate unminified CSS for development
+    return gulp.src('./assets/scss/main.scss')
+        .pipe(sass({
+            includePaths: [paths.bootstrap + '/scss'],
+            outputStyle: 'expanded',
+            quietDeps: true
+        }).on('error', sass.logError))
+        .pipe(autoprefixer({
+            cascade: false
+        }))
+        .pipe(rename('tax-calculator.css'))
         .pipe(gulp.dest(paths.css));
 }
 

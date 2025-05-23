@@ -13,12 +13,12 @@ class Tax_Calculator {
 
     public function enqueue_scripts() {
         // Enqueue Bootstrap CSS
-        wp_enqueue_style(
-            'bootstrap',
-            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-            array(),
-            '5.3.0'
-        );
+        // wp_enqueue_style(
+        //     'bootstrap',
+        //     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+        //     array(),
+        //     '5.3.0'
+        // );
 
         // Enqueue Material Icons
         wp_enqueue_style(
@@ -62,7 +62,22 @@ class Tax_Calculator {
         ));
     }
 
-    public function render_calculator() {
+    public function render_calculator($atts = array()) {
+        // Define default values for the new text attributes
+        $default_texts = array(
+            'text_monthly_donation_label' => esc_html__('The amount I am happy to give each month', 'tax-calculator'),
+            'text_years_label' => esc_html__('The number of years over which I wish to spread my donation', 'tax-calculator'),
+            'text_one_off_donation_label' => esc_html__('The amount I am happy to give as a one-off donation', 'tax-calculator'),
+            'text_invalid_amount_message' => esc_html__('Amount is required and should be more than &pound;1', 'tax-calculator'),
+            'text_invalid_years_message' => esc_html__('Years count should be from 1 to 3', 'tax-calculator'),
+            'text_submit_button' => esc_html__('SUBMIT', 'tax-calculator'),
+        );
+
+        $parsed_atts = shortcode_atts($default_texts, $atts, 'tax_calculator');
+        
+        // Extract attributes into variables for the template
+        extract($parsed_atts);
+
         ob_start();
         include TAX_CALCULATOR_PLUGIN_DIR . 'templates/tax-calculator.php';
         return ob_get_clean();
@@ -93,7 +108,7 @@ class Tax_Calculator {
             'donationAmount' => floatval($_POST['donationAmount']),
             'years' => isset($_POST['years']) ? intval($_POST['years']) : null,
             'taxRate' => sanitize_text_field($_POST['taxRate']),
-            'giftAid' => isset($_POST['giftAid']) ? (bool)$_POST['giftAid'] : false,
+            'giftAid' => isset($_POST['giftAid']) && $_POST['giftAid'] === '1',
             'totalAmount' => floatval($_POST['totalAmount']),
             'netMonthlyCost' => isset($_POST['netMonthlyCost']) ? floatval($_POST['netMonthlyCost']) : null,
             'netAnnualCost' => isset($_POST['netAnnualCost']) ? floatval($_POST['netAnnualCost']) : null,

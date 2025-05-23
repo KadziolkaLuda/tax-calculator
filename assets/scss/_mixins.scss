@@ -61,11 +61,3 @@
         box-shadow: 0 0 0 0.2rem rgba(v.$primary, 0.25);
     }
 }
-
-// Modal mixins
-@mixin modal-style {
-    background-color: v.$calculator-bg;
-    border-radius: v.$modal-border-radius;
-    padding: v.$modal-padding;
-    box-shadow: v.$calculator-shadow;
-} 
