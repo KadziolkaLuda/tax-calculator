@@ -141,27 +141,24 @@ class Tax_Calculator {
     private function send_emails($data) {
         $admin_emails = get_option('tax_calculator_admin_emails', array(get_option('admin_email')));
         $subject = get_option('tax_calculator_email_subject', __('New Donation Form Submission', 'tax-calculator'));
-        $message = $this->get_email_template($data);
+        
+        // Get admin email template
+        ob_start();
+        include TAX_CALCULATOR_PLUGIN_DIR . 'templates/email-template.php';
+        $message = ob_get_clean();
 
         foreach ($admin_emails as $email) {
-            wp_mail($email, $subject, $message, array('Content-Type: text/html; charset=UTF-8'));
+            wp_mail($email, $subject, $message, headers: array('Content-Type: text/html; charset=UTF-8'));
         }
 
         // Send confirmation email to user
         $user_subject = get_option('tax_calculator_user_email_subject', __('Thank you from Amici Bruerni', 'tax-calculator'));
-        $user_message = $this->get_user_email_template($data);
-        wp_mail($data['email'], $user_subject, $user_message, array('Content-Type: text/html; charset=UTF-8'));
-    }
-
-    private function get_email_template($data) {
-        ob_start();
-        include TAX_CALCULATOR_PLUGIN_DIR . 'templates/email-template.php';
-        return ob_get_clean();
-    }
-
-    private function get_user_email_template($data) {
+        
+        // Get user email template
         ob_start();
         include TAX_CALCULATOR_PLUGIN_DIR . 'templates/user-email-template.php';
-        return ob_get_clean();
+        $user_message = ob_get_clean();
+        
+        wp_mail($data['email'], $user_subject, $user_message, array('Content-Type: text/html; charset=UTF-8'));
     }
 }

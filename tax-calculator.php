@@ -55,6 +55,10 @@ function tax_calculator_activate() {
         require_once TAX_CALCULATOR_PLUGIN_DIR . 'includes/class-tax-calculator-db.php';
         Tax_Calculator_DB::create_tables();
 
+        // Get default email templates
+        $default_admin_template = file_get_contents(TAX_CALCULATOR_PLUGIN_DIR . 'templates/email-template.php');
+        $default_user_template = file_get_contents(TAX_CALCULATOR_PLUGIN_DIR . 'templates/user-email-template.php');
+
         // Set default options
         $default_options = array(
             'admin_email' => get_option('admin_email'),
@@ -63,6 +67,13 @@ function tax_calculator_activate() {
             'max_years' => 3
         );
         add_option('tax_calculator_settings', $default_options);
+        
+        // Set default email templates
+        add_option('tax_calculator_email_template', $default_admin_template);
+        add_option('tax_calculator_user_email_template', $default_user_template);
+        add_option('tax_calculator_email_subject', __('New Donation Form Submission', 'tax-calculator'));
+        add_option('tax_calculator_user_email_subject', __('Thank you from Amici Bruerni', 'tax-calculator'));
+        add_option('tax_calculator_admin_emails', array(get_option('admin_email')));
     } catch (Exception $e) {
         error_log('Tax Calculator with donation form Activation Error: ' . $e->getMessage());
     }
@@ -74,6 +85,11 @@ function tax_calculator_deactivate() {
     try {
         // Delete plugin options
         delete_option('tax_calculator_settings');
+        delete_option('tax_calculator_email_template');
+        delete_option('tax_calculator_user_email_template');
+        delete_option('tax_calculator_email_subject');
+        delete_option('tax_calculator_user_email_subject');
+        delete_option('tax_calculator_admin_emails');
         
         // Delete database tables
         global $wpdb;
@@ -89,6 +105,19 @@ function tax_calculator_deactivate() {
     } catch (Exception $e) {
         error_log('Tax Calculator with donation form Deactivation Error: ' . $e->getMessage());
     }
+}
+
+// Uninstall hook
+register_uninstall_hook(__FILE__, 'tax_calculator_uninstall');
+function tax_calculator_uninstall() {
+    // Remove all plugin data
+    Tax_Calculator_DB::drop_tables();
+    delete_option('tax_calculator_max_years');
+    delete_option('tax_calculator_admin_emails');
+    delete_option('tax_calculator_email_subject');
+    delete_option('tax_calculator_user_email_subject');
+    delete_option('tax_calculator_email_template');
+    delete_option('tax_calculator_user_email_template');
 }
 
 // Enqueue styles and scripts
