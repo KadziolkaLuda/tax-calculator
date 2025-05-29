@@ -13,13 +13,7 @@ class Tax_Calculator {
 
     public function enqueue_scripts() {
         // Enqueue Bootstrap CSS
-        // wp_enqueue_style(
-        //     'bootstrap',
-        //     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-        //     array(),
-        //     '5.3.0'
-        // );
-
+       
         // Enqueue Material Icons
         wp_enqueue_style(
             'material-icons',
@@ -58,7 +52,7 @@ class Tax_Calculator {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('tax_calculator_nonce'),
             'minDonation' => get_option('tax_calculator_settings')['min_donation'] ?? 1,
-            'maxYears' => get_option('tax_calculator_settings')['max_years'] ?? 3
+            'maxYears' => get_option('tax_calculator_max_years', 10)
         ));
     }
 
@@ -69,8 +63,7 @@ class Tax_Calculator {
             'text_years_label' => esc_html__('The number of years over which I wish to spread my donation', 'tax-calculator'),
             'text_one_off_donation_label' => esc_html__('The amount I am happy to give as a one-off donation', 'tax-calculator'),
             'text_invalid_amount_message' => esc_html__('Amount is required and should be more than &pound;1', 'tax-calculator'),
-            'text_invalid_years_message' => esc_html__('Years count should be from 1 to 3', 'tax-calculator'),
-            'text_submit_button' => esc_html__('SUBMIT', 'tax-calculator'),
+            'text_invalid_years_message' => esc_html__('Years count should be from 1 to 10', 'tax-calculator')
         );
 
         $parsed_atts = shortcode_atts($default_texts, $atts, 'tax_calculator');
@@ -95,6 +88,19 @@ class Tax_Calculator {
             }
         }
 
+        // Validate years if phased donation
+        if (isset($_POST['donation_way']) && $_POST['donation_way'] === 'phased') {
+            $years = isset($_POST['years']) ? intval($_POST['years']) : 0;
+            $max_years = get_option('tax_calculator_max_years', 10);
+            
+            if ($years < 1 || $years > $max_years) {
+                wp_send_json_error(array(
+                    'message' => sprintf(__('Years count should be from 1 to %d', 'tax-calculator'), $max_years)
+                ));
+                return;
+            }
+        }
+
         $data = array(
             'firstName' => sanitize_text_field($_POST['firstName']),
             'lastName' => sanitize_text_field($_POST['lastName']),
@@ -104,16 +110,14 @@ class Tax_Calculator {
             'postalCode' => sanitize_text_field($_POST['postalCode']),
             'country' => sanitize_text_field($_POST['country']),
             'mobile' => sanitize_text_field($_POST['mobile']),
-            'donationType' => sanitize_text_field($_POST['donationType']),
-            'donationAmount' => floatval($_POST['donationAmount']),
+            'donation_amount' => floatval($_POST['donation_amount']),
+            'donation_way' => sanitize_text_field($_POST['donation_way']),
             'years' => isset($_POST['years']) ? intval($_POST['years']) : null,
-            'taxRate' => sanitize_text_field($_POST['taxRate']),
-            'giftAid' => isset($_POST['giftAid']) && $_POST['giftAid'] === '1',
-            'totalAmount' => floatval($_POST['totalAmount']),
-            'netMonthlyCost' => isset($_POST['netMonthlyCost']) ? floatval($_POST['netMonthlyCost']) : null,
-            'netAnnualCost' => isset($_POST['netAnnualCost']) ? floatval($_POST['netAnnualCost']) : null,
-            'totalNetCost' => isset($_POST['totalNetCost']) ? floatval($_POST['totalNetCost']) : null,
-            'totalValueWithGiftAid' => floatval($_POST['totalValueWithGiftAid'])
+            'gift_aid' => isset($_POST['gift_aid']) && $_POST['gift_aid'] === 'yes',
+            'gift_aid_date' => isset($_POST['gift_aid_date']) ? sanitize_text_field($_POST['gift_aid_date']) : null,
+            'public_acknowledgment' => isset($_POST['public_acknowledgment']) && $_POST['public_acknowledgment'] === 'yes',
+            'appear_name' => isset($_POST['appear_name']) ? sanitize_text_field($_POST['appear_name']) : null,
+            'donation_for' => isset($_POST['donation_for']) ? sanitize_text_field($_POST['donation_for']) : null
         );
 
         // Save to database
@@ -136,7 +140,7 @@ class Tax_Calculator {
 
     private function send_emails($data) {
         $admin_emails = get_option('tax_calculator_admin_emails', array(get_option('admin_email')));
-        $subject = get_option('tax_calculator_email_subject', __('New Tax Calculator Submission', 'tax-calculator'));
+        $subject = get_option('tax_calculator_email_subject', __('New Donation Form Submission', 'tax-calculator'));
         $message = $this->get_email_template($data);
 
         foreach ($admin_emails as $email) {
@@ -144,7 +148,7 @@ class Tax_Calculator {
         }
 
         // Send confirmation email to user
-        $user_subject = get_option('tax_calculator_user_email_subject', __('Thank you for your donation calculation', 'tax-calculator'));
+        $user_subject = get_option('tax_calculator_user_email_subject', __('Thank you from Amici Bruerni', 'tax-calculator'));
         $user_message = $this->get_user_email_template($data);
         wp_mail($data['email'], $user_subject, $user_message, array('Content-Type: text/html; charset=UTF-8'));
     }

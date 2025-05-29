@@ -1,0 +1,22 @@
+//  html button
+
+.custom-elementor-button {
+    width: 100%;
+    text-transform: uppercase !important;
+    background-color: var(--e-global-color-554bdd2) !important;
+    font-family: var(--e-global-typography-text-font-family), Sans-serif !important;
+    font-size: var(--e-global-typography-text-font-size) !important;
+    font-weight: var(--e-global-typography-text-font-weight) !important;
+    line-height: var(--e-global-typography-text-line-height) !important;
+    fill: var(--e-global-color-primary) !important;
+    color: var(--e-global-color-primary) !important;
+    transition-duration: 1s !important;
+    border-style: none !important;
+    border-radius: 0px 0px 0px 0px !important;
+    padding: 16px 50px 16px 50px !important;
+
+    &:hover {
+        background-color: var(--e-global-color-b6d9524) !important;
+        color: var(--e-global-color-554bdd2) !important;
+    }
+}

@@ -15,7 +15,6 @@ const paths = {
 // Copy Bootstrap files
 function copyBootstrap() {
     return gulp.src([
-        // paths.bootstrap + '/dist/css/bootstrap.min.css',
         paths.bootstrap + '/dist/js/bootstrap.bundle.min.js'
     ])
     .pipe(gulp.dest(function(file) {
@@ -28,7 +27,6 @@ function buildStyles() {
     // Generate minified CSS
     gulp.src('./assets/scss/main.scss')
         .pipe(sass({
-            includePaths: [paths.bootstrap + '/scss'],
             outputStyle: 'compressed',
             quietDeps: true
         }).on('error', sass.logError))
@@ -42,7 +40,6 @@ function buildStyles() {
     // Generate unminified CSS for development
     return gulp.src('./assets/scss/main.scss')
         .pipe(sass({
-            includePaths: [paths.bootstrap + '/scss'],
             outputStyle: 'expanded',
             quietDeps: true
         }).on('error', sass.logError))

@@ -24,12 +24,14 @@ class Tax_Calculator_DB {
             postal_code varchar(20) NOT NULL,
             country varchar(100) NOT NULL,
             mobile varchar(20) NOT NULL,
-            donation_type enum('monthly','one-time') NOT NULL,
             donation_amount decimal(10,2) NOT NULL,
+            donation_way enum('single','phased') NOT NULL,
             years int(2) DEFAULT NULL,
-            gift_aid tinyint(1) NOT NULL,
-            total_amount decimal(10,2) NOT NULL,
-            total_net_cost decimal(10,2) DEFAULT NULL,
+            gift_aid tinyint(1) NOT NULL DEFAULT 0,
+            gift_aid_date date DEFAULT NULL,
+            public_acknowledgment tinyint(1) NOT NULL DEFAULT 0,
+            appear_name varchar(100) DEFAULT NULL,
+            donation_for varchar(100) DEFAULT NULL,
             ip_address varchar(45) DEFAULT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
@@ -56,18 +58,19 @@ class Tax_Calculator_DB {
                 'postal_code' => sanitize_text_field($data['postalCode']),
                 'country' => sanitize_text_field($data['country']),
                 'mobile' => sanitize_text_field($data['mobile']),
-                'donation_type' => $data['donationType'],
-                'donation_amount' => floatval($data['donationAmount']),
+                'donation_amount' => floatval($data['donation_amount']),
+                'donation_way' => $data['donation_way'],
                 'years' => isset($data['years']) ? intval($data['years']) : null,
-                'gift_aid' => $data['giftAid'] ? 1 : 0,
-                'total_amount' => floatval($data['totalAmount']),
-                'total_net_cost' => isset($data['totalNetCost']) ? floatval($data['totalNetCost']) : null,
+                'gift_aid' => $data['gift_aid'] ? 1 : 0,
+                'gift_aid_date' => $data['gift_aid_date'],
+                'public_acknowledgment' => $data['public_acknowledgment'] ? 1 : 0,
+                'appear_name' => $data['appear_name'],
+                'donation_for' => $data['donation_for'],
                 'ip_address' => self::get_client_ip()
             ),
             array(
                 '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-                '%s', '%f', '%d', '%d',
-                '%f', '%f', '%s'
+                '%f', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s'
             )
         );
 

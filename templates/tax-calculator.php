@@ -38,9 +38,9 @@
                                     <div class="col-sm-6 d-flex flex-column align-items-start position-relative px-0 ps-sm-3">
                                         <input type="number" id="numOfYears" name="numOfYears"
                                             class="form-control text-sm tp-input tp-input--years" placeholder="years"
-                                            min="1" max="4" value="1">
+                                            min="1" max="<?php echo esc_attr(get_option('tax_calculator_max_years', 10)); ?>" value="1">
                                         <div class="year invalid-feedback">
-                                            <?php echo esc_html($text_invalid_years_message); ?>
+                                            <?php printf(esc_html__('Years count should be from 1 to %d', 'tax-calculator'), get_option('tax_calculator_max_years', 10)); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -179,17 +179,7 @@
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="text-center my-6">
-                        <div class="submit-button-wrapper w-100">
-                        <button type="submit" id="submitCalculator" class="btn rounded-0 btn-subbmit">
-                            <?php echo esc_html(strtoupper($text_submit_button)); ?>
-                        </button>
-                        </div>
-                        <div id="validation-message" class="mt-3 text-danger" style="display: none;">
-                            Please select a donation type and enter an amount to proceed.
-                        </div>
-                    </div>
+                
                 </form>
     </div>
 

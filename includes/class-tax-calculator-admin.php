@@ -11,8 +11,8 @@ class Tax_Calculator_Admin {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'register_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-        add_action('wp_ajax_tax_calculator_export_csv', array($this, 'export_csv'));
-        add_action('wp_ajax_tax_calculator_delete_submission', array($this, 'delete_submission'));
+        add_action('wp_ajax_tax_calculator_delete_submission', array($this, 'handle_delete_submission'));
+        add_action('wp_ajax_tax_calculator_export_csv', array($this, 'handle_export_csv'));
     }
 
     public function add_admin_menu() {
@@ -37,7 +37,6 @@ class Tax_Calculator_Admin {
     }
 
     public function register_settings() {
-        register_setting('tax_calculator_settings', 'tax_calculator_min_donation');
         register_setting('tax_calculator_settings', 'tax_calculator_max_years');
         register_setting('tax_calculator_settings', 'tax_calculator_admin_emails', array(
             'type' => 'array',
@@ -123,7 +122,7 @@ class Tax_Calculator_Admin {
         include TAX_CALCULATOR_PLUGIN_DIR . 'templates/admin/submissions.php';
     }
 
-    public function export_csv() {
+    public function handle_export_csv() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
@@ -131,86 +130,17 @@ class Tax_Calculator_Admin {
         check_ajax_referer('tax_calculator_admin_nonce', 'nonce');
 
         // Get filter parameters
-        $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
-        $date_from = isset($_GET['date_from']) ? sanitize_text_field($_GET['date_from']) : '';
-        $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : '';
-
-        // Get all submissions with filters
         $args = array(
-            'per_page' => -1, // Get all records
-            'page' => 1,
-            'search' => $search,
-            'date_from' => $date_from,
-            'date_to' => $date_to
+            'search' => isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '',
+            'date_from' => isset($_GET['date_from']) ? sanitize_text_field($_GET['date_from']) : '',
+            'date_to' => isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : ''
         );
 
-        $submissions = Tax_Calculator_DB::get_submissions($args);
-
-        if (empty($submissions['items'])) {
-            wp_die(__('No submissions found to export.', 'tax-calculator'));
-        }
-
-        // Set headers for CSV download
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=tax-calculator-submissions-' . date('Y-m-d') . '.csv');
-
-        // Create output stream
-        $output = fopen('php://output', 'w');
-
-        // Add UTF-8 BOM
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-
-        // Add headers
-        $headers = array(
-            'ID',
-            'Name',
-            'Email',
-            'Mobile',
-            'Address',
-            'Donation Type',
-            'Donation Amount',
-            'Years',
-            'Gift Aid',
-            'Total Amount',
-            'Created At'
-        );
-        
-        // Write headers with semicolon delimiter
-        fputcsv($output, $headers, ';');
-
-        // Add data
-        foreach ($submissions['items'] as $submission) {
-            $address_parts = array(
-                $submission->address,
-                $submission->postal_town,
-                $submission->postal_code,
-                $submission->country
-            );
-            $full_address = implode(', ', array_filter($address_parts));
-            
-            $row = array(
-                $submission->id,
-                $submission->first_name . ' ' . $submission->last_name,
-                $submission->email,
-                $submission->mobile,
-                $full_address,
-                $submission->donation_type,
-                $submission->donation_amount,
-                $submission->donation_type === 'one-time' ? '-' : $submission->years,
-                $submission->gift_aid ? 'Yes' : 'No',
-                $submission->total_amount,
-                $submission->created_at
-            );
-            
-            // Write row with semicolon delimiter
-            fputcsv($output, $row, ';');
-        }
-
-        fclose($output);
-        exit;
+        // Use the export class to handle the export
+        Tax_Calculator_Export::export_csv($args);
     }
 
-    public function delete_submission() {
+    public function handle_delete_submission() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.', 'tax-calculator'));
         }

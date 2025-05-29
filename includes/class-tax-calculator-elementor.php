@@ -296,36 +296,6 @@ class Tax_Calculator_Elementor_Widget extends Widget_Base
             ]
         );
 
-        $this->add_control(
-            'text_invalid_amount_message',
-            [
-                'label' => esc_html__('Invalid Amount Message', 'tax-calculator'),
-                'type' => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => esc_html__('Amount is required and should be more than &pound;1', 'tax-calculator'),
-                'rows' => 2,
-            ]
-        );
-
-        $this->add_control(
-            'text_invalid_years_message',
-            [
-                'label' => esc_html__('Invalid Years Message', 'tax-calculator'),
-                'type' => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => esc_html__('Years count should be from 1 to 3', 'tax-calculator'),
-                'rows' => 2,
-            ]
-        );
-
-        $this->add_control(
-            'text_submit_button',
-            [
-                'label' => esc_html__('Submit Button Text', 'tax-calculator'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => esc_html__('SUBMIT', 'tax-calculator'),
-                'rows' => 2,
-            ]
-        );
-
         $this->end_controls_section();
 
         // Add Input Labels style section
@@ -497,7 +467,6 @@ class Tax_Calculator_Elementor_Widget extends Widget_Base
         require_once TAX_CALCULATOR_PLUGIN_DIR . 'includes/controls/class-divider-controls.php';
         Tax_Calculator_Divider_Controls::add_controls($this);
 
-        // === BUTTON STYLES ===
         // Include button controls
         require_once plugin_dir_path(__FILE__) . 'controls/class-button-controls.php';
         Tax_Calculator_Button_Controls::add_controls($this);
@@ -517,8 +486,7 @@ class Tax_Calculator_Elementor_Widget extends Widget_Base
             'text_years_label',
             'text_one_off_donation_label',
             'text_invalid_amount_message',
-            'text_invalid_years_message',
-            'text_submit_button'
+            'text_invalid_years_message'
         ];
 
         foreach ($text_attributes as $attr) {

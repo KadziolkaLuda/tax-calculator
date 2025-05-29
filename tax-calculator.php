@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Tax Calculator
+ * Plugin Name: Tax Calculator with donation form
  * Plugin URI: https://github.com/KadziolkaLuda/tax-calculator
- * Description: A donation calculator with Gift Aid and tax relief calculations, integrated with Elementor.
- * Version: 1.0.0
+ * Description: A donation calculator with Gift Aid and tax relief calculations and donation form in modal window, integrated with Elementor.
+ * Version: 1.1.0
  * Author: Liudmyla Kadziolka
  * Author URI: https://github.com/KadziolkaLuda
  * Text Domain: tax-calculator
@@ -42,7 +42,7 @@ function tax_calculator_init() {
             $tax_calculator_admin->init();
         }
     } catch (Exception $e) {
-        error_log('Tax Calculator Error: ' . $e->getMessage());
+        error_log('Tax Calculator with donation form Error: ' . $e->getMessage());
     }
 }
 add_action('plugins_loaded', 'tax_calculator_init');
@@ -64,7 +64,7 @@ function tax_calculator_activate() {
         );
         add_option('tax_calculator_settings', $default_options);
     } catch (Exception $e) {
-        error_log('Tax Calculator Activation Error: ' . $e->getMessage());
+        error_log('Tax Calculator with donation form Activation Error: ' . $e->getMessage());
     }
 }
 
@@ -87,7 +87,7 @@ function tax_calculator_deactivate() {
         wp_clear_scheduled_hook('tax_calculator_daily_cleanup');
         
     } catch (Exception $e) {
-        error_log('Tax Calculator Deactivation Error: ' . $e->getMessage());
+        error_log('Tax Calculator with donation form Deactivation Error: ' . $e->getMessage());
     }
 }
 
@@ -159,7 +159,7 @@ function tax_calculator_admin_notices() {
     if ($screen && $screen->id === 'plugins') {
         ?>
         <div class="notice notice-warning is-dismissible tax-calculator-deactivation-warning" style="display: none;">
-            <p><strong>Warning:</strong> Deactivating the Tax Calculator plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?</p>
+            <p><strong>Warning:</strong> Deactivating the Tax Calculator with donation form plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?</p>
         </div>
         <script type="text/javascript">
         jQuery(document).ready(function($) {
@@ -176,7 +176,7 @@ function tax_calculator_admin_notices() {
                 e.stopPropagation();
                 var deactivateLink = $(this).attr('href');
                 
-                if (confirm('Warning: Deactivating the Tax Calculator plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?')) {
+                if (confirm('Warning: Deactivating the Tax Calculator with donation form plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?')) {
                     window.location.href = deactivateLink;
                 }
                 return false;
@@ -244,23 +244,20 @@ function tax_calculator_admin_scripts() {
         <script type="text/javascript">
         jQuery(document).ready(function($) {
             // Debug log
-            console.log('Tax Calculator deactivation script loaded');
+            
             
             // Function to show warning
             function showWarning() {
-                console.log('Showing warning');
                 $('.tax-calculator-deactivation-warning').show();
             }
             
             // Function to hide warning
             function hideWarning() {
-                console.log('Hiding warning');
                 $('.tax-calculator-deactivation-warning').hide();
             }
             
             // Function to handle deactivation
             function handleDeactivation(e) {
-                console.log('Deactivation clicked');
                 e.preventDefault();
                 var deactivateLink = $(this).attr('href');
                 
@@ -271,7 +268,6 @@ function tax_calculator_admin_scripts() {
             
             // Find all deactivate links for our plugin
             var deactivateLinks = $('a[href*="action=deactivate&plugin=<?php echo TAX_CALCULATOR_PLUGIN_BASENAME; ?>"]');
-            console.log('Found deactivate links:', deactivateLinks.length);
             
             // Add hover events
             deactivateLinks.on('mouseenter', showWarning)
@@ -292,7 +288,7 @@ function tax_calculator_admin_scripts() {
                 if ($('#bulk-action-selector-top').val() === 'deactivate-selected' || 
                     $('#bulk-action-selector-bottom').val() === 'deactivate-selected') {
                     if ($('input[name="checked[]"][value="<?php echo TAX_CALCULATOR_PLUGIN_BASENAME; ?>"]').is(':checked')) {
-                        if (!confirm('Warning: Deactivating the Tax Calculator plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?')) {
+                        if (!confirm('Warning: Deactivating the Tax Calculator with donation form plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?')) {
                             e.preventDefault();
                         }
                     }
@@ -301,7 +297,7 @@ function tax_calculator_admin_scripts() {
             
             // Add warning to the DOM if it doesn't exist
             if ($('.tax-calculator-deactivation-warning').length === 0) {
-                $('<div class="notice notice-warning is-dismissible tax-calculator-deactivation-warning" style="display: none;"><p><strong>Warning:</strong> Deactivating the Tax Calculator plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?</p></div>').insertAfter('.wrap h1');
+                $('<div class="notice notice-warning is-dismissible tax-calculator-deactivation-warning" style="display: none;"><p><strong>Warning:</strong> Deactivating the Tax Calculator with donation form plugin will remove all calculator data and settings. This action cannot be undone. Are you sure you want to proceed?</p></div>').insertAfter('.wrap h1');
             }
         });
         </script>

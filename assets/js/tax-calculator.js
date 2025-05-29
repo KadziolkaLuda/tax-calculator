@@ -19,7 +19,43 @@ jQuery(document).ready(function($) {
     var modalElement = document.getElementById('calculatorModal');
     if (modalElement) {
         var calculatorModal = new bootstrap.Modal(modalElement);
+        
+        // Make modal available globally
+        window.taxCalculatorModal = calculatorModal;
+
+        // Add event listener for modal show
+        modalElement.addEventListener('show.bs.modal', function () {
+            const monthlyValue = parseFloat(monthly.val()) || 0;
+            const oneSum = parseFloat(oneOff.val()) || 0;
+            const yearVal = parseInt(years.val()) || 0;
+            
+            // Update donation amount in modal
+            if (actualPledge > 0) {
+                $('#donation_amount').val(actualPledge);
+            }
+            
+            // Handle donation way selection
+            if (monthlyValue > 0) {
+                $('#donation_way_phased').prop('checked', true);
+                $('#years').val(yearVal);
+                updateYearsText(yearVal);
+            } else if (oneSum > 0) {
+                $('#donation_way_single').prop('checked', true);
+            }
+        });
     }
+
+    // Function to update years text
+    function updateYearsText(value) {
+        const yearsText = value === 1 ? 'year' : 'years';
+        $('.years-text').text(yearsText);
+    }
+
+    // Add event listener for years input change
+    $('#years').on('input', function() {
+        const value = parseInt($(this).val()) || 0;
+        updateYearsText(value);
+    });
 
     // Variables to store calculation results
     var monthlyGift = 0;
@@ -43,7 +79,6 @@ jQuery(document).ready(function($) {
             oneOff.val('').prop('required', false);
             years.prop('required', true);
             validateMonthlyInputs();
-            $('#validation-message').hide();
         } else {
             resetValidation();
         }
@@ -61,9 +96,18 @@ jQuery(document).ready(function($) {
         if (oneSum > 0) {
             monthly.val('').prop('required', false);
             validateOneTimeInput();
-            $('#validation-message').hide();
         } else {
             resetValidation();
+        }
+    });
+
+    // Handle donation way changes in modal
+    $('input[name="donation_way"]').on('change', function() {
+        const selectedWay = $(this).val();
+        if (selectedWay === 'phased') {
+            $('#years').prop('required', true);
+        } else {
+            $('#years').prop('required', false);
         }
     });
 
@@ -82,7 +126,7 @@ jQuery(document).ready(function($) {
 
         // Validate years only if user has interacted with the field
         if (years.val() !== '') {
-            if (yearVal < 1 || yearVal > 4) {
+            if (yearVal < 1 || yearVal > taxCalculator.maxYears) {
                 years.addClass('is-invalid');
                 isValid = false;
             } else {
@@ -117,51 +161,7 @@ jQuery(document).ready(function($) {
         $('.invalid-feedback').removeAttr('style');
         $('.actual-pledge-value, .total-pledge-value').text('0');
         $('#anualCosts, #netMonthAfterTax, #totalNetCosts').hide();
-        $('#validation-message').hide();
     }
-
-    // Form submission
-    $('#submitCalculator').on('click', function(e) {
-        e.preventDefault(); // Prevent default button behavior
-        const monthlyValue = parseFloat(monthly.val()) || 0;
-        const oneSum = parseFloat(oneOff.val()) || 0;
-        let isValid = true;
-
-        // Reset previous validation states
-        resetValidation();
-
-        // Validate based on which input is filled
-        if (monthlyValue > 0) {
-            isValid = validateMonthlyInputs();
-            $('#validation-message').hide();
-            
-            // Show monthly info and update years
-            const yearVal = parseInt(years.val()) || 0;
-            $('.monthly-info').show();
-            $('.years-value').text(yearVal);
-            $('.years-text').text(yearVal === 1 ? 'year' : 'years');
-        } else if (oneSum > 0) {
-            isValid = validateOneTimeInput();
-            $('#validation-message').hide();
-            
-            // Hide monthly info for one-time donations
-            $('.monthly-info').hide();
-        } else {
-            // No valid input - show only message without marking inputs
-            $('#validation-message').show();
-            isValid = false;
-        }
-
-        if (!isValid) {
-            return;
-        }
-
-        // Update the total amount in the modal
-        $('.total-amount-value').text('£' + actualPledge);
-        
-        // Show the modal
-        calculatorModal.show();
-    });
 
     // Handle tax band changes
     $('input[name="taxBand"]').on('change', function(e) {
@@ -349,6 +349,18 @@ jQuery(document).ready(function($) {
         }
     });
 
+    // Add real-time validation for donation amount
+    $('#donation_amount').on('input', function() {
+        const value = parseFloat($(this).val()) || 0;
+        if (value < 1) {
+            $(this).addClass('is-invalid');
+            $(this).next('.invalid-feedback').show();
+        } else {
+            $(this).removeClass('is-invalid');
+            $(this).next('.invalid-feedback').hide();
+        }
+    });
+
     $('#submitDonation').on('click', function(e) {
         e.preventDefault();
         
@@ -370,6 +382,51 @@ jQuery(document).ready(function($) {
                 isValid = false;
             }
         });
+
+        // Validate donation amount
+        const donationAmount = parseFloat($('#donation_amount').val()) || 0;
+        if (donationAmount < 1) {
+            $('#donation_amount').addClass('is-invalid');
+            $('#donation_amount').next('.invalid-feedback').show();
+            isValid = false;
+        }
+
+        // Validate donation way and years
+        const donationWay = $('input[name="donation_way"]:checked').val();
+        if (!donationWay) {
+            $('.donation-way-group').addClass('is-invalid');
+            $('.donation-way-group .invalid-feedback').show();
+            isValid = false;
+        } else if (donationWay === 'phased') {
+            const yearsValue = parseInt($('#years').val()) || 0;
+            if (yearsValue < 1 || yearsValue > taxCalculator.maxYears) {
+                $('#years').addClass('is-invalid');
+                $('#years-feedback').show();
+                isValid = false;
+            }
+        }
+
+        // Validate gift aid
+        const giftAid = $('input[name="gift_aid"]:checked').val();
+        if (giftAid === 'yes') {
+            const giftAidDate = $('#gift_aid_date').val();
+            if (!giftAidDate) {
+                $('#gift_aid_date').addClass('is-invalid');
+                $('#gift_aid_date').next('.invalid-feedback').show();
+                isValid = false;
+            }
+        }
+        
+        // Validate public acknowledgment
+        const publicAcknowledgment = $('input[name="public_acknowledgment"]:checked').val();
+        if (publicAcknowledgment === 'yes') {
+            const appearName = $('#appear_name').val().trim();
+            if (!appearName) {
+                $('#appear_name').addClass('is-invalid');
+                $('#appear_name').next('.invalid-feedback').show();
+                isValid = false;
+            }
+        }
         
         // Validate email format
         const emailInput = $('input[name="email"]');
@@ -389,12 +446,6 @@ jQuery(document).ready(function($) {
         const mobileInput = $('input[name="mobile"]');
         const phoneValue = mobileInput.val().trim();
         if (phoneValue) {
-            // More flexible phone regex that accepts:
-            // - UK mobile: 07xxx xxxxxx, +447xxx xxxxxx
-            // - UK landline: 02xxx xxxxxx, +442xxx xxxxxx
-            // - European numbers: +xx xxxxxxxx
-            // - International numbers: +xxx xxxxxxxx
-            // - Numbers with or without spaces and dashes
             const phoneRegex = /^(\+?44|0)7\d{9}$|^(\+?44|0)2\d{9}$|^\+\d{1,3}[\s-]?\d{6,14}$/;
             if (!phoneRegex.test(phoneValue.replace(/[\s-]/g, ''))) {
                 mobileInput[0].classList.add('is-invalid');
@@ -406,6 +457,21 @@ jQuery(document).ready(function($) {
         }
         
         if (!isValid) {
+            // Find first invalid input and scroll to it
+            const firstInvalidInput = $('.is-invalid').first();
+            if (firstInvalidInput.length) {
+                const modalBody = $('.modal-body');
+                const inputOffset = firstInvalidInput.offset().top;
+                const modalBodyOffset = modalBody.offset().top;
+                const scrollPosition = inputOffset - modalBodyOffset - 20; // 20px padding from top
+                
+                modalBody.animate({
+                    scrollTop: scrollPosition
+                }, 500);
+                
+                // Focus the input
+                firstInvalidInput.focus();
+            }
             return;
         }
 
@@ -426,13 +492,14 @@ jQuery(document).ready(function($) {
             postalCode: $('input[name="postalCode"]').val(),
             country: $('input[name="country"]').val(),
             mobile: $('input[name="mobile"]').val(),
-            donationType: monthlyValue > 0 ? 'monthly' : 'one-time',
-            donationAmount: monthlyValue > 0 ? monthlyValue : oneSum,
-            years: yearVal,
-            taxRate: taxRate,
-            giftAid: $('input[name="giftAid"]').is(':checked') ? '1' : '',
-            totalAmount: actualPledge,
-            totalNetCost: $('.total-net-costs-value').text() || '0'
+            donation_amount: parseFloat($('#donation_amount').val()) || 0,
+            donation_way: $('input[name="donation_way"]:checked').val(),
+            years: parseInt($('#years').val()) || null,
+            gift_aid: $('input[name="gift_aid"]:checked').val(),
+            gift_aid_date: $('#gift_aid_date').val(),
+            public_acknowledgment: $('input[name="public_acknowledgment"]:checked').val(),
+            appear_name: $('#appear_name').val(),
+            donation_for: $('#donation_for').val()
         };
 
         // Send AJAX request
@@ -455,8 +522,6 @@ jQuery(document).ready(function($) {
                     // Reset input states
                     $('.is-invalid').removeClass('is-invalid');
                     $('.invalid-feedback').hide();
-                    // Reset validation message
-                    $('#validation-message').hide();
                     // Reset total amount in modal
                     $('.total-amount-value').text('£0');
                     // Reset variables

@@ -42,11 +42,14 @@ if (!defined('ABSPATH')) {
                 <th scope="col"><?php _e('Email', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Mobile', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Address', 'tax-calculator'); ?></th>
-                <th scope="col"><?php _e('Donation Type', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Amount', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('Way', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Years', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Gift Aid', 'tax-calculator'); ?></th>
-                <th scope="col"><?php _e('Total', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('Gift Aid Date', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('Acknowledgment', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('Appear Name', 'tax-calculator'); ?></th>
+                <th scope="col"><?php _e('For', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Date', 'tax-calculator'); ?></th>
                 <th scope="col"><?php _e('Actions', 'tax-calculator'); ?></th>
             </tr>
@@ -70,16 +73,17 @@ if (!defined('ABSPATH')) {
                             echo implode(', ', array_filter($address_parts));
                             ?>
                         </td>
-                        <td><?php echo esc_html($submission->donation_type); ?></td>
-                        <td><?php echo esc_html($submission->donation_amount); ?></td>
-                        <td><?php echo $submission->donation_type === 'one-time' ? '-' : esc_html($submission->years); ?></td>
+                        <td>£<?php echo number_format($submission->donation_amount, 2); ?></td>
+                        <td><?php echo esc_html($submission->donation_way); ?></td>
+                        <td><?php echo $submission->donation_way === 'phased' ? esc_html($submission->years) : '-'; ?></td>
                         <td><?php echo $submission->gift_aid ? __('Yes', 'tax-calculator') : __('No', 'tax-calculator'); ?></td>
-                        <td><?php echo esc_html($submission->total_amount); ?></td>
+                        <td><?php echo $submission->gift_aid ? esc_html($submission->gift_aid_date) : '-'; ?></td>
+                        <td><?php echo $submission->public_acknowledgment ? __('Yes', 'tax-calculator') : __('No', 'tax-calculator'); ?></td>
+                        <td><?php echo $submission->public_acknowledgment ? esc_html($submission->appear_name) : '-'; ?></td>
+                        <td><?php echo esc_html($submission->donation_for); ?></td>
                         <td><?php echo esc_html($submission->created_at); ?></td>
                         <td>
-                            <button type="button" 
-                                    class="button tax-calculator-delete" 
-                                    data-id="<?php echo esc_attr($submission->id); ?>">
+                            <button type="button" class="button tax-calculator-delete" data-id="<?php echo esc_attr($submission->id); ?>">
                                 <?php _e('Delete', 'tax-calculator'); ?>
                             </button>
                         </td>

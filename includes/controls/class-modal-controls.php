@@ -224,66 +224,214 @@ class Tax_Calculator_Modal_Controls {
             ]
         );
 
-        // Pledge Text Controls
+        // Modal Divider Controls
         $widget->add_control(
-            'heading_pledge_text',
+            'heading_modal_divider',
             [
-                'label' => esc_html__('Pledge Text', 'tax-calculator'),
+                'label' => esc_html__('Modal Divider', 'tax-calculator'),
                 'type' => \Elementor\Controls_Manager::HEADING,
                 'separator' => 'before',
             ]
         );
 
-        // Pledge Text Typography
-        $widget->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
-            [
-                'name' => 'pledge_text_typography',
-                'selector' => '{{WRAPPER}} .modal-form-pledge',
-            ]
-        );
-
-        // Pledge Text Color
+        // Divider Text
         $widget->add_control(
-            'pledge_text_color',
+            'divider_text',
             [
-                'label' => esc_html__('Text Color', 'tax-calculator'),
-                'type' => \Elementor\Controls_Manager::COLOR,
+                'label' => esc_html__('Divider Text', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => 'OR',
                 'selectors' => [
-                    '{{WRAPPER}} .modal-form-pledge, {{WRAPPER}} .modal-form-pledge--total' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .modal-divider span' => 'content: "{{VALUE}}";',
                 ],
             ]
         );
 
-        // Pledge Text Margin
+        // Divider Style
+        $widget->add_control(
+            'divider_style',
+            [
+                'label' => esc_html__('Style', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'horizontal',
+                'options' => [
+                    'horizontal' => esc_html__('Horizontal', 'tax-calculator'),
+                    'vertical' => esc_html__('Vertical', 'tax-calculator'),
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider' => 'display: flex; align-items: center; {{VALUE}}',
+                ],
+                'selectors_dictionary' => [
+                    'horizontal' => 'flex-direction: row;',
+                    'vertical' => 'flex-direction: column;',
+                ],
+            ]
+        );
+
+        // Divider Alignment
         $widget->add_responsive_control(
-            'pledge_text_margin',
+            'divider_alignment',
+            [
+                'label' => esc_html__('Alignment', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => esc_html__('Left', 'tax-calculator'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => esc_html__('Center', 'tax-calculator'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => esc_html__('Right', 'tax-calculator'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider' => 'justify-content: {{VALUE}};',
+                ],
+                'condition' => [
+                    'divider_style' => 'horizontal',
+                ],
+            ]
+        );
+
+        // Divider Vertical Alignment
+        $widget->add_responsive_control(
+            'divider_vertical_alignment',
+            [
+                'label' => esc_html__('Vertical Alignment', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => esc_html__('Top', 'tax-calculator'),
+                        'icon' => 'eicon-v-align-top',
+                    ],
+                    'center' => [
+                        'title' => esc_html__('Middle', 'tax-calculator'),
+                        'icon' => 'eicon-v-align-middle',
+                    ],
+                    'flex-end' => [
+                        'title' => esc_html__('Bottom', 'tax-calculator'),
+                        'icon' => 'eicon-v-align-bottom',
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider' => 'align-items: {{VALUE}};',
+                ],
+                'condition' => [
+                    'divider_style' => 'vertical',
+                ],
+            ]
+        );
+
+        // Divider Color
+        $widget->add_control(
+            'divider_color',
+            [
+                'label' => esc_html__('Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider::before, {{WRAPPER}} .modal-divider::after' => 'background-color: {{VALUE}};',
+                    '{{WRAPPER}} .modal-divider span' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        // Divider Width
+        $widget->add_responsive_control(
+            'divider_width',
+            [
+                'label' => esc_html__('Width', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 1000,
+                    ],
+                    '%' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider::before, {{WRAPPER}} .modal-divider::after' => 'width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Divider Height
+        $widget->add_responsive_control(
+            'divider_height',
+            [
+                'label' => esc_html__('Height', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider::before, {{WRAPPER}} .modal-divider::after' => 'height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Divider Spacing
+        $widget->add_responsive_control(
+            'divider_spacing',
+            [
+                'label' => esc_html__('Spacing', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider span' => 'margin: 0 {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Divider Text Typography
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'divider_text_typography',
+                'selector' => '{{WRAPPER}} .modal-divider span',
+            ]
+        );
+
+        // Divider Margin
+        $widget->add_responsive_control(
+            'divider_margin',
             [
                 'label' => esc_html__('Margin', 'tax-calculator'),
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', 'em', '%'],
                 'selectors' => [
-                    '{{WRAPPER}} .modal-form-pledge, {{WRAPPER}} .modal-form-pledge--total' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .modal-divider' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
 
-        // Total Pledge Text Controls
-        $widget->add_control(
-            'heading_total_pledge_text',
+        // Divider Padding
+        $widget->add_responsive_control(
+            'divider_padding',
             [
-                'label' => esc_html__('Total Pledge Text', 'tax-calculator'),
-                'type' => \Elementor\Controls_Manager::HEADING,
-                'separator' => 'before',
-            ]
-        );
-
-        // Total Pledge Text Typography
-        $widget->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
-            [
-                'name' => 'total_pledge_text_typography',
-                'selector' => '{{WRAPPER}} .modal-form-pledge--total',
+                'label' => esc_html__('Padding', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-divider' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
             ]
         );
 
@@ -307,6 +455,18 @@ class Tax_Calculator_Modal_Controls {
             ]
         );
 
+        // Modal Header Background
+        $widget->add_control(
+            'modal_header_background',
+            [
+                'label' => esc_html__('Background Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .modal-header' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
         // Modal Header Padding
         $widget->add_responsive_control(
             'modal_header_padding',
@@ -316,6 +476,126 @@ class Tax_Calculator_Modal_Controls {
                 'size_units' => ['px', 'em', '%'],
                 'selectors' => [
                     '{{WRAPPER}} .modal-header' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Modal Title Typography
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'modal_title_typography',
+                'label' => esc_html__('Title Typography', 'tax-calculator'),
+                'selector' => '{{WRAPPER}} .modal-title-heading',
+            ]
+        );
+
+        // Modal Title Color
+        $widget->add_control(
+            'modal_title_color',
+            [
+                'label' => esc_html__('Title Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .modal-title-heading' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        // Modal Title Margin
+        $widget->add_responsive_control(
+            'modal_title_margin',
+            [
+                'label' => esc_html__('Title Margin', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .modal-title-heading' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Close Button Icon
+        $widget->add_control(
+            'modal_close_button_icon',
+            [
+                'label' => esc_html__('Close Button Icon', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'fas fa-times',
+                    'library' => 'fa-solid',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .btn-custom-close i' => 'display: block;',
+                ],
+            ]
+        );
+
+        // Close Button Custom Icon
+        $widget->add_control(
+            'modal_close_button_custom_icon',
+            [
+                'label' => esc_html__('Custom Close Icon', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::MEDIA,
+                'media_type' => 'image',
+                'default' => [
+                    'url' => '',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .btn-custom-close' => 'background-image: url("{{URL}}"); background-size: contain; background-position: center; background-repeat: no-repeat;',
+                ],
+            ]
+        );
+
+        // Close Button Size
+        $widget->add_responsive_control(
+            'modal_close_button_size',
+            [
+                'label' => esc_html__('Close Button Size', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', 'em'],
+                'range' => [
+                    'px' => [
+                        'min' => 10,
+                        'max' => 50,
+                    ],
+                    'em' => [
+                        'min' => 0.5,
+                        'max' => 3,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .btn-custom-close' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Close Button Color
+        $widget->add_control(
+            'modal_close_button_color',
+            [
+                'label' => esc_html__('Close Button Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .btn-custom-close i' => 'color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'modal_close_button_icon[value]!' => '',
+                ],
+            ]
+        );
+
+        // Close Button Hover Color
+        $widget->add_control(
+            'modal_close_button_hover_color',
+            [
+                'label' => esc_html__('Close Button Hover Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .btn-custom-close:hover i' => 'color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'modal_close_button_icon[value]!' => '',
                 ],
             ]
         );
@@ -362,6 +642,74 @@ class Tax_Calculator_Modal_Controls {
                 'size_units' => ['px', 'em', '%'],
                 'selectors' => [
                     '{{WRAPPER}} .modal-footer' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $widget->end_controls_section();
+
+        // Row Explain Section
+        $widget->start_controls_section(
+            'section_row_explain',
+            [
+                'label' => esc_html__('How to donate Section', 'tax-calculator'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        // Row Explain Heading Typography
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'row_explain_heading_typography',
+                'label' => esc_html__('Heading Typography', 'tax-calculator'),
+                'selector' => '{{WRAPPER}} .row-explain .row-explain--heading',
+            ]
+        );
+
+        // Row Explain Heading Color
+        $widget->add_control(
+            'row_explain_heading_color',
+            [
+                'label' => esc_html__('Heading Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .row-explain .row-explain--heading' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        // Row Explain Heading Margin
+        $widget->add_responsive_control(
+            'row_explain_heading_margin',
+            [
+                'label' => esc_html__('Heading Margin', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .row-explain .row-explain--heading' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        // Row Explain Paragraph Typography
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'row_explain_paragraph_typography',
+                'label' => esc_html__('Paragraph Typography', 'tax-calculator'),
+                'selector' => '{{WRAPPER}} .row-explain p',
+            ]
+        );
+
+        // Row Explain Paragraph Color
+        $widget->add_control(
+            'row_explain_paragraph_color',
+            [
+                'label' => esc_html__('Paragraph Color', 'tax-calculator'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .row-explain p' => 'color: {{VALUE}};',
                 ],
             ]
         );

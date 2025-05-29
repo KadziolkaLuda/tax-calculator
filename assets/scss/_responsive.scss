@@ -2,16 +2,3 @@
 
 
 // Modal responsive styles
-.tax-calculator-modal {
-    @include m.media-breakpoint-up(md) {
-        .modal-dialog {
-            max-width: 100%;
-        }
-    }
-
-    @include m.media-breakpoint-up(lg) {
-        .modal-dialog {
-            max-width: 800px;
-        }
-    }
-} 
